@@ -1,4 +1,4 @@
-discrete-representation
+vector-representation
 =========
 
  **KeLP** is the Kernel-based Learning Platform developed in the [Semantic Analytics Group][sag-site] of
