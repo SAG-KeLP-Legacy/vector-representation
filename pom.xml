@@ -9,6 +9,18 @@
 		<name>Semantic Analytics Group @ Uniroma2</name>
 		<url>http://sag.art.uniroma2.it</url>
 	</organization>
+	<distributionManagement>
+		<repository>
+			<id>sag_repo_release</id>
+			<name>Sag Libs Repository Stable</name>
+			<url>http://sag.art.uniroma2.it:8081/artifactory/kelp-release/</url>
+		</repository>
+		<snapshotRepository>
+			<id>sag_repo_snap</id>
+			<name>Sag Libs Repository Snapshots</name>
+			<url>http://sag.art.uniroma2.it:8081/artifactory/kelp-snapshot/</url>
+		</snapshotRepository>
+	</distributionManagement>
 	<repositories>
 		<repository>
 			<id>sag_repo_snap</id>
