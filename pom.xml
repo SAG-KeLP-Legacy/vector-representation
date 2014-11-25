@@ -4,6 +4,38 @@
   <artifactId>vector-representation</artifactId>
   <version>0.0.9-SNAPSHOT</version>
   <name>VectorRepresentation</name>
+  <repositories>
+		<repository>
+			<id>sag_repo_snap</id>
+			<name>Sag Libs Repository Snapshots</name>
+			<releases>
+				<enabled>false</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+			<url>http://sag.art.uniroma2.it:8081/artifactory/libs-snapshot-local/</url>
+		</repository>
+		<repository>
+			<id>sag_repo_release</id>
+			<name>Sag Libs Repository Stable</name>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+			<url>http://sag.art.uniroma2.it:8081/artifactory/libs-release-local/</url>
+		</repository>
+	</repositories>
 	<build>
 		<plugins>
 			<plugin>
