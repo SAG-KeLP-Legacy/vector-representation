@@ -22,11 +22,14 @@ import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TIntFloatHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
+import it.uniroma2.sag.kelp.data.example.SimpleExample;
 import it.uniroma2.sag.kelp.data.representation.Vector;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -270,16 +273,48 @@ public class SparseVector implements Vector {
 		return norm;
 	}
 
-	@JsonIgnore
+	@Override
 	public Map<String, Float> getActiveFeatures() {
 		HashMap<String, Float> res = new HashMap<String, Float>();
 
-		for (int dimIntLabel : this.vector.keys()) {
-			res.put(fromIntToWord.get(dimIntLabel),
-					this.vector.get(dimIntLabel));
+		for (TIntFloatIterator it = this.vector.iterator(); it.hasNext();) {
+			it.advance();
+			
+			res.put(fromIntToWord.get(it.key()), it.value());
 		}
-
 		return res;
 	}
 
+	public void merge(Vector vector, float coefficient, String newDimensionPrefix){
+		Map<String, Float> activeFeats = vector.getActiveFeatures();
+		for(Entry<String, Float> entry : activeFeats.entrySet()){
+			String dimension = newDimensionPrefix + "_" + entry.getKey();
+			int index = fromWordToInt.get(dimension);
+			float value = coefficient * entry.getValue();
+			
+			if (index == 0) {
+				fromWordToInt.put(dimension, wordCounter);
+				fromIntToWord.put(wordCounter, dimension);
+				this.vector.put(wordCounter, value);
+				wordCounter++;
+				if (wordCounter == 0) {
+					wordCounter++;
+				}
+			} else {
+				this.vector.put(index, value);
+			}
+		}
+	}
+	
+	public static SparseVector mergeVectors(SimpleExample example, List<String> representationsToBeMerged, List<Float> weights){
+		SparseVector vector = new SparseVector();
+		for(int i=0; i<representationsToBeMerged.size(); i++){
+			String representation = representationsToBeMerged.get(i);
+			Vector vectorToBeAdded = (Vector) example.getRepresentation(representation);
+			vector.merge(vectorToBeAdded, weights.get(i), representation);
+		}
+		
+		return vector;
+	}
+	
 }

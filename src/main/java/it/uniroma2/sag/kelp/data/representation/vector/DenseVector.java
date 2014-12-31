@@ -15,6 +15,9 @@
 
 package it.uniroma2.sag.kelp.data.representation.vector;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import it.uniroma2.sag.kelp.data.representation.Vector;
 
 import org.ejml.alg.dense.mult.VectorVectorMult;
@@ -243,5 +246,16 @@ public class DenseVector implements Vector {
 	public float getSquaredNorm() {
 		double norm = NormOps.fastNormP2(this.featuresValues);
 		return (float)(norm*norm);
+	}
+
+	@Override
+	public Map<String, Float> getActiveFeatures() {
+		Map<String, Float> activeFeats = new HashMap<String, Float>();
+		for(int i=0; i<this.getNumberOfFeatures(); i++){
+			if(featuresValues.get(0, i) != 0){
+				activeFeats.put(Integer.toString(i), (float) featuresValues.get(0, i));
+			}
+		}
+		return activeFeats;
 	}
 }
