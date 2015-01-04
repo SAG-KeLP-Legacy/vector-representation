@@ -22,12 +22,10 @@ import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TIntFloatHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
-import it.uniroma2.sag.kelp.data.example.SimpleExample;
 import it.uniroma2.sag.kelp.data.representation.Vector;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -306,15 +304,6 @@ public class SparseVector implements Vector {
 		}
 	}
 	
-	public static SparseVector mergeVectors(SimpleExample example, List<String> representationsToBeMerged, List<Float> weights){
-		SparseVector vector = new SparseVector();
-		for(int i=0; i<representationsToBeMerged.size(); i++){
-			String representation = representationsToBeMerged.get(i);
-			Vector vectorToBeAdded = (Vector) example.getRepresentation(representation);
-			vector.merge(vectorToBeAdded, weights.get(i), representation);
-		}
-		
-		return vector;
-	}
+	
 	
 }
