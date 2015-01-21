@@ -59,14 +59,19 @@ public class DenseVector implements Vector {
 	
 	@Override
 	public void setDataFromText(String representationDescription) {
+//		String [] stringFeatures = representationDescription.split(SEPARATOR);
+//		float [] features = new float [stringFeatures.length];
+//		
+//		for(int i=0; i<stringFeatures.length; i++){
+//			features[i]= Float.parseFloat(stringFeatures[i]);
+//		}
+//		this.setFeatureValues(features);
 		String [] stringFeatures = representationDescription.split(SEPARATOR);
-		float [] features = new float [stringFeatures.length];
+		this.featuresValues = new DenseMatrix64F(1, stringFeatures.length);
 		
 		for(int i=0; i<stringFeatures.length; i++){
-			features[i]= Float.parseFloat(stringFeatures[i]);
-		}
-		this.setFeatureValues(features);
-		
+			this.featuresValues.set(0, i, Double.parseDouble(stringFeatures[i]));
+		}	
 	}
 	
 	/**
