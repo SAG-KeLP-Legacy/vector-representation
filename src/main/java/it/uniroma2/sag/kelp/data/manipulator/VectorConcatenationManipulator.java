@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 
-package it.uniroma2.sag.kelp.data.representation.vector;
+package it.uniroma2.sag.kelp.data.manipulator;
 
 import it.uniroma2.sag.kelp.data.example.Example;
-import it.uniroma2.sag.kelp.data.example.Manipulator;
 import it.uniroma2.sag.kelp.data.representation.Vector;
+import it.uniroma2.sag.kelp.data.representation.vector.SparseVector;
 
 import java.util.List;
 
