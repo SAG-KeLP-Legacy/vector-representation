@@ -44,6 +44,11 @@ public class VectorConcatenationManipulator implements Manipulator{
 
 	@Override
 	public void manipulate(Example example) {
+		for(String repName : representationsToBeConcatenated){
+			if(example.getRepresentation(repName)==null){
+				return;//probably we are trying to manipulate the wrong level of the example structure
+			}
+		}
 		concatenateVectors(example, representationsToBeConcatenated, weights, concatenationName);
 	}
 
