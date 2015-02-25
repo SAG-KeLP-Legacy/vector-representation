@@ -36,8 +36,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * Sparse Feature Vector. 
- * It is based on a Hashmap implementation.
+ * Sparse Feature Vector. It is based on a Hashmap implementation.
  * 
  * @author Simone Filice
  */
@@ -64,7 +63,6 @@ public class SparseVector implements Vector {
 
 	@Override
 	public void normalize() {
-
 		float norm = (float) Math.sqrt(this.getSquaredNorm());
 		if (norm == 0) {
 			return;// TODO: verificare cosa fare
@@ -72,7 +70,6 @@ public class SparseVector implements Vector {
 		for (TIntFloatIterator it = vector.iterator(); it.hasNext();) {
 			it.advance();
 			it.setValue(it.value() / norm);
-
 		}
 	}
 
@@ -97,7 +94,12 @@ public class SparseVector implements Vector {
 			}
 			dimTmp = feature.substring(0, separatorIndex);
 			valueTmp = feature.substring(separatorIndex + 1);
-			value = Float.parseFloat(valueTmp);
+			Float val = Float.parseFloat(valueTmp);
+			if (val.isNaN()) {
+				logger.warn("NaN value in representation: "
+						+ representationDescription);
+			}
+			value = val.floatValue();
 
 			int index = fromWordToInt.get(dimTmp);
 
@@ -116,17 +118,14 @@ public class SparseVector implements Vector {
 				this.vector.put(index, value);
 			}
 		}
-
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder description = new StringBuilder();
-
 		// accessing keys/values through an iterator:
 		for (TIntFloatIterator it = this.vector.iterator(); it.hasNext();) {
 			it.advance();
-
 			String name = fromIntToWord.get(it.key());
 			description.append(name + NAME_VALUE_SEPARATOR
 					+ Float.toString(it.value()) + FEATURE_SEPARATOR);
@@ -190,14 +189,10 @@ public class SparseVector implements Vector {
 
 	@Override
 	public void scale(float coeff) {
-
 		for (TIntFloatIterator it = this.vector.iterator(); it.hasNext();) {
 			it.advance();
-
 			it.setValue(it.value() * coeff);
-
 		}
-
 	}
 
 	@Override
@@ -235,18 +230,18 @@ public class SparseVector implements Vector {
 	public void add(float coeff, float vectorCoeff, Vector vector) {
 		this.scale(coeff);
 		this.add(vectorCoeff, vector);
-//		if (vector instanceof SparseVector) {
-//			SparseVector that = (SparseVector) vector;
-//			for (TIntFloatIterator it = that.vector.iterator(); it.hasNext();) {
-//				it.advance();
-//				float thisValue = this.getFeatureValue(it.key());
-//				this.vector.put(it.key(),
-//						thisValue * coeff + vectorCoeff * it.value());
-//			}
-//		} else {
-//			throw new IllegalArgumentException(
-//					"Expected a SparseVector to performe add operation");
-//		}
+		// if (vector instanceof SparseVector) {
+		// SparseVector that = (SparseVector) vector;
+		// for (TIntFloatIterator it = that.vector.iterator(); it.hasNext();) {
+		// it.advance();
+		// float thisValue = this.getFeatureValue(it.key());
+		// this.vector.put(it.key(),
+		// thisValue * coeff + vectorCoeff * it.value());
+		// }
+		// } else {
+		// throw new IllegalArgumentException(
+		// "Expected a SparseVector to performe add operation");
+		// }
 	}
 
 	@JsonIgnore
@@ -277,19 +272,20 @@ public class SparseVector implements Vector {
 
 		for (TIntFloatIterator it = this.vector.iterator(); it.hasNext();) {
 			it.advance();
-			
+
 			res.put(fromIntToWord.get(it.key()), it.value());
 		}
 		return res;
 	}
 
-	public void merge(Vector vector, float coefficient, String newDimensionPrefix){
+	public void merge(Vector vector, float coefficient,
+			String newDimensionPrefix) {
 		Map<String, Float> activeFeats = vector.getActiveFeatures();
-		for(Entry<String, Float> entry : activeFeats.entrySet()){
+		for (Entry<String, Float> entry : activeFeats.entrySet()) {
 			String dimension = newDimensionPrefix + "_" + entry.getKey();
 			int index = fromWordToInt.get(dimension);
 			float value = coefficient * entry.getValue();
-			
+
 			if (index == 0) {
 				fromWordToInt.put(dimension, wordCounter);
 				fromIntToWord.put(wordCounter, dimension);
@@ -303,7 +299,4 @@ public class SparseVector implements Vector {
 			}
 		}
 	}
-	
-	
-	
 }

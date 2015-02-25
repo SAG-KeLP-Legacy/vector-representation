@@ -70,7 +70,12 @@ public class DenseVector implements Vector {
 		this.featuresValues = new DenseMatrix64F(1, stringFeatures.length);
 		
 		for(int i=0; i<stringFeatures.length; i++){
-			this.featuresValues.set(0, i, Double.parseDouble(stringFeatures[i]));
+			Double val = Double.parseDouble(stringFeatures[i]);
+			if (val.isNaN()) {
+				logger.warn("NaN value in representation: "
+						+ representationDescription);
+			}
+			this.featuresValues.set(0, i, val);
 		}	
 	}
 	
