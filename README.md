@@ -1,7 +1,7 @@
 vector-representation
 =========
 
- **KeLP** is the Kernel-based Learning Platform developed in the [Semantic Analytics Group][sag-site] of
+[**KeLP**][kelp-site] is the Kernel-based Learning Platform developed in the [Semantic Analytics Group][sag-site] of
 the [University of Roma Tor Vergata][uniroma2-site].
 
 This is the vector-representation module of KeLP. It contains the representation such as DenseVector or SparseVector. These representations can be exploited both in linear and kernel-based algorithms. 
@@ -14,3 +14,4 @@ The SparseVector representation is the best option for modeling sparse feature v
 [uniroma2-site]: http://www.uniroma2.it "University of Roma Tor Vergata"
 [ejml-site]: https://code.google.com/p/efficient-java-matrix-library/ "EJML site"
 [trove-site]: http://trove.starlight-systems.com/news "TROVE site"
+[kelp-site]: http://sag.art.uniroma2.it/demo-software/kelp/
