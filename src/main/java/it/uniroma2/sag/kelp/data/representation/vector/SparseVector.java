@@ -299,4 +299,20 @@ public class SparseVector implements Vector {
 			}
 		}
 	}
+
+	@Override
+	public void pointWiseProduct(Vector vector) {
+		if (vector instanceof SparseVector) {
+			SparseVector that = (SparseVector) vector;
+			for (TIntFloatIterator it = that.vector.iterator(); it.hasNext();) {
+				it.advance();
+				float thisValue = this.getFeatureValue(it.key());
+				this.vector.put(it.key(), thisValue * it.value());
+			}
+
+		} else {
+			throw new IllegalArgumentException(
+					"Expected a SparseVector to performe add operation");
+		}
+	}
 }

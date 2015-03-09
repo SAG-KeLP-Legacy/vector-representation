@@ -31,9 +31,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * Dense Feature Vector. 
- * <br>It uses <a href="https://code.google.com/p/efficient-java-matrix-library"> EJML </a> to guarantee a
- * very fast computation
+ * Dense Feature Vector. <br>
+ * It uses <a href="https://code.google.com/p/efficient-java-matrix-library">
+ * EJML </a> to guarantee a very fast computation
  * 
  * @author Simone Filice
  */
@@ -42,43 +42,46 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 public class DenseVector implements Vector {
 	private Logger logger = LoggerFactory.getLogger(DenseVector.class);
 	private static final long serialVersionUID = 1150851329091800382L;
-	private static final String SEPARATOR=" |,";//a space or a comma can separate feature values
-	
+	private static final String SEPARATOR = " |,";// a space or a comma can
+													// separate feature values
+
 	@JsonIgnore
 	private DenseMatrix64F featuresValues;
 
 	/**
-	 * Empty constructor necessary for making <code>RepresentationFactory</code> support this implementation.
+	 * Empty constructor necessary for making <code>RepresentationFactory</code>
+	 * support this implementation.
 	 * 
 	 * @param featureVector
 	 *            is an array of feature values
 	 */
 	public DenseVector() {
-		
+
 	}
-	
+
 	@Override
 	public void setDataFromText(String representationDescription) {
-//		String [] stringFeatures = representationDescription.split(SEPARATOR);
-//		float [] features = new float [stringFeatures.length];
-//		
-//		for(int i=0; i<stringFeatures.length; i++){
-//			features[i]= Float.parseFloat(stringFeatures[i]);
-//		}
-//		this.setFeatureValues(features);
-		String [] stringFeatures = representationDescription.split(SEPARATOR);
+		// String [] stringFeatures =
+		// representationDescription.split(SEPARATOR);
+		// float [] features = new float [stringFeatures.length];
+		//
+		// for(int i=0; i<stringFeatures.length; i++){
+		// features[i]= Float.parseFloat(stringFeatures[i]);
+		// }
+		// this.setFeatureValues(features);
+		String[] stringFeatures = representationDescription.split(SEPARATOR);
 		this.featuresValues = new DenseMatrix64F(1, stringFeatures.length);
-		
-		for(int i=0; i<stringFeatures.length; i++){
+
+		for (int i = 0; i < stringFeatures.length; i++) {
 			Double val = Double.parseDouble(stringFeatures[i]);
 			if (val.isNaN()) {
 				logger.warn("NaN value in representation: "
 						+ representationDescription);
 			}
 			this.featuresValues.set(0, i, val);
-		}	
+		}
 	}
-	
+
 	/**
 	 * Initializing constructor.
 	 * 
@@ -202,47 +205,58 @@ public class DenseVector implements Vector {
 
 	@Override
 	public float innerProduct(Vector vector) {
-		if(vector instanceof DenseVector){
+		if (vector instanceof DenseVector) {
 			DenseVector dense = (DenseVector) vector;
 			if (featuresValues == null)
 				logger.debug("Features Values are null");
-			return (float)VectorVectorMult.innerProd(featuresValues, dense.getFeatureValues());
+			return (float) VectorVectorMult.innerProd(featuresValues,
+					dense.getFeatureValues());
 		}
-	
-		throw new IllegalArgumentException("Expected a DenseVector to performe the innerProduct");
+
+		throw new IllegalArgumentException(
+				"Expected a DenseVector to performe the innerProduct");
+	}
+
+	@Override
+	public void pointWiseProduct(Vector vector) {
+		CommonOps.elementMult(this.featuresValues,
+				((DenseVector) vector).featuresValues);
 	}
 
 	@Override
 	public void scale(float coeff) {
 		CommonOps.scale(coeff, this.featuresValues);
-		
+
 	}
 
 	@Override
 	public void add(Vector vector) {
-		CommonOps.addEquals(this.featuresValues, ((DenseVector)vector).featuresValues);		
-		
+		CommonOps.addEquals(this.featuresValues,
+				((DenseVector) vector).featuresValues);
+
 	}
 
 	@Override
 	public void add(float coeff, Vector vector) {
-		
-		CommonOps.addEquals(this.featuresValues, coeff, ((DenseVector)vector).featuresValues);
-		
+
+		CommonOps.addEquals(this.featuresValues, coeff,
+				((DenseVector) vector).featuresValues);
+
 	}
 
 	@Override
 	public void add(float coeff, float vectorCoeff, Vector vector) {
 		this.scale(coeff);
 		this.add(vectorCoeff, vector);
-		
+
 	}
 
 	@JsonIgnore
 	@Override
 	public Vector getZeroVector() {
-		DenseMatrix64F dense = new DenseMatrix64F(this.featuresValues.numRows, this.featuresValues.numCols);
-		DenseVector vector = new DenseVector(dense);		
+		DenseMatrix64F dense = new DenseMatrix64F(this.featuresValues.numRows,
+				this.featuresValues.numCols);
+		DenseVector vector = new DenseVector(dense);
 		return vector;
 	}
 
@@ -255,15 +269,16 @@ public class DenseVector implements Vector {
 	@JsonIgnore
 	public float getSquaredNorm() {
 		double norm = NormOps.fastNormP2(this.featuresValues);
-		return (float)(norm*norm);
+		return (float) (norm * norm);
 	}
 
 	@Override
 	public Map<String, Float> getActiveFeatures() {
 		Map<String, Float> activeFeats = new HashMap<String, Float>();
-		for(int i=0; i<this.getNumberOfFeatures(); i++){
-			if(featuresValues.get(0, i) != 0){
-				activeFeats.put(Integer.toString(i), (float) featuresValues.get(0, i));
+		for (int i = 0; i < this.getNumberOfFeatures(); i++) {
+			if (featuresValues.get(0, i) != 0) {
+				activeFeats.put(Integer.toString(i),
+						(float) featuresValues.get(0, i));
 			}
 		}
 		return activeFeats;
