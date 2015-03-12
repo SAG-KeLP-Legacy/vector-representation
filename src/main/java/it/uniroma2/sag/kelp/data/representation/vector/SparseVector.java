@@ -25,6 +25,7 @@ import gnu.trove.map.hash.TObjectIntHashMap;
 import it.uniroma2.sag.kelp.data.representation.Vector;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -304,11 +305,27 @@ public class SparseVector implements Vector {
 	public void pointWiseProduct(Vector vector) {
 		if (vector instanceof SparseVector) {
 			SparseVector that = (SparseVector) vector;
-			for (TIntFloatIterator it = that.vector.iterator(); it.hasNext();) {
+			// A list of integer hash to be removed by the map after the pointwise product operation
+			ArrayList<Integer> remove = new ArrayList<Integer>();
+			for (TIntFloatIterator it = this.vector.iterator(); it.hasNext();) {
 				it.advance();
-				float thisValue = this.getFeatureValue(it.key());
-				this.vector.put(it.key(), thisValue * it.value());
+				float myValue = it.value();
+				float itsValue = that.getVector().get(it.key());
+				float newValue = myValue*itsValue;
+				// if the new value is zero and this vector contained that element
+				// then add the current key to remove
+				if (newValue == 0.0f && this.vector.containsKey(it.key())) {
+					remove.add(it.key());
+				} else {
+					// if the new value is different from zero
+					// then add it to the map
+					if (newValue!=0.0f)
+						this.vector.put(it.key(), newValue);
+				}
 			}
+			// remove zero elements
+			for (Integer i : remove)
+				this.vector.remove(i);
 
 		} else {
 			throw new IllegalArgumentException(
