@@ -235,6 +235,11 @@ public class DenseVector implements Vector {
 				((DenseVector) vector).featuresValues);
 
 	}
+	
+	public void diff(Vector vector) {
+		CommonOps.subEquals(this.featuresValues,
+				((DenseVector) vector).featuresValues);
+	}
 
 	@Override
 	public void add(float coeff, Vector vector) {
