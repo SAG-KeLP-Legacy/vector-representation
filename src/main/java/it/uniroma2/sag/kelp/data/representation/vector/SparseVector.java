@@ -268,8 +268,8 @@ public class SparseVector implements Vector {
 	}
 
 	@Override
-	public Map<String, Float> getActiveFeatures() {
-		HashMap<String, Float> res = new HashMap<String, Float>();
+	public Map<String, Number> getActiveFeatures() {
+		HashMap<String, Number> res = new HashMap<String, Number>();
 
 		for (TIntFloatIterator it = this.vector.iterator(); it.hasNext();) {
 			it.advance();
@@ -281,11 +281,11 @@ public class SparseVector implements Vector {
 
 	public void merge(Vector vector, float coefficient,
 			String newDimensionPrefix) {
-		Map<String, Float> activeFeats = vector.getActiveFeatures();
-		for (Entry<String, Float> entry : activeFeats.entrySet()) {
+		Map<String, Number> activeFeats = vector.getActiveFeatures();
+		for (Entry<String, Number> entry : activeFeats.entrySet()) {
 			String dimension = newDimensionPrefix + "_" + entry.getKey();
 			int index = fromWordToInt.get(dimension);
-			float value = coefficient * entry.getValue();
+			float value = coefficient * entry.getValue().floatValue();
 
 			if (index == 0) {
 				fromWordToInt.put(dimension, wordCounter);

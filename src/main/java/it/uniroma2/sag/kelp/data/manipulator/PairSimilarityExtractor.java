@@ -52,7 +52,7 @@ public class PairSimilarityExtractor implements Manipulator{
 			DenseVector similarityVector;
 
 			similarityVector = new DenseVector();
-			float [] featureVector = new float[similarityMetrics.length];
+			double [] featureVector = new double[similarityMetrics.length];
 			for(int i=0; i<similarityMetrics.length; i++){
 				try{
 					featureVector[i] = similarityMetrics[i].innerProduct(left, right);

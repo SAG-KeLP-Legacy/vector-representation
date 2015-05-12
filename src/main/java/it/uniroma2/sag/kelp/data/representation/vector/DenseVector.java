@@ -88,7 +88,7 @@ public class DenseVector implements Vector {
 	 * @param featureVector
 	 *            is an array of feature values
 	 */
-	public DenseVector(float[] featureVector) {
+	public DenseVector(double[] featureVector) {
 		this.setFeatureValues(featureVector);
 	}
 
@@ -108,10 +108,10 @@ public class DenseVector implements Vector {
 	 * @param featureValues
 	 *            is an array of feature values
 	 */
-	public void setFeatureValues(float[] featureValues) {
+	public void setFeatureValues(double[] featureValues) {
 		this.featuresValues = new DenseMatrix64F(1, featureValues.length);
 		for (int i = 0; i < featureValues.length; i++) {
-			this.featuresValues.set(0, i, (double) featureValues[i]);
+			this.featuresValues.set(0, i, featureValues[i]);
 		}
 
 	}
@@ -144,8 +144,8 @@ public class DenseVector implements Vector {
 	 *            the index of the feature whose value must be returned
 	 * @return the value of the feature
 	 */
-	public float getFeatureValue(int featureIndex) {
-		return (float) featuresValues.get(0, featureIndex);
+	public double getFeatureValue(int featureIndex) {
+		return featuresValues.get(0, featureIndex);
 	}
 
 	/**
@@ -188,9 +188,9 @@ public class DenseVector implements Vector {
 			return "";
 		}
 		StringBuilder ret = new StringBuilder();
-		ret.append(Float.toString(this.getFeatureValue(0)));
+		ret.append(Double.toString(this.getFeatureValue(0)));
 		for (int i = 1; i < this.featuresValues.numCols; i++) {
-			ret = ret.append(" " + Float.toString(this.getFeatureValue(i)));
+			ret = ret.append(" " + Double.toString(this.getFeatureValue(i)));
 		}
 
 		return ret.toString().trim();
@@ -278,12 +278,12 @@ public class DenseVector implements Vector {
 	}
 
 	@Override
-	public Map<String, Float> getActiveFeatures() {
-		Map<String, Float> activeFeats = new HashMap<String, Float>();
+	public Map<String, Number> getActiveFeatures() {
+		Map<String, Number> activeFeats = new HashMap<String, Number>();
 		for (int i = 0; i < this.getNumberOfFeatures(); i++) {
 			if (featuresValues.get(0, i) != 0) {
 				activeFeats.put(Integer.toString(i),
-						(float) featuresValues.get(0, i));
+						featuresValues.get(0, i));
 			}
 		}
 		return activeFeats;
