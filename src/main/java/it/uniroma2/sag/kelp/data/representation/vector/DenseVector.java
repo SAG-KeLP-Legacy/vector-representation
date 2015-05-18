@@ -288,4 +288,11 @@ public class DenseVector implements Vector {
 		}
 		return activeFeats;
 	}
+
+	@Override
+	public Vector copyVector() {
+		DenseMatrix64F featureValues = this.getFeatureValues().copy();
+		DenseVector copy = new DenseVector(featureValues);
+		return copy;
+	}
 }

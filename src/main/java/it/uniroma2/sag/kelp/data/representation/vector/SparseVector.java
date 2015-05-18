@@ -332,4 +332,18 @@ public class SparseVector implements Vector {
 					"Expected a SparseVector to performe add operation");
 		}
 	}
+
+	@Override
+	public Vector copyVector() {
+		Vector copy = new SparseVector();
+		
+		try {
+			copy.setDataFromText(this.getTextFromData());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return this.getZeroVector();
+		}
+		
+		return copy;
+	}
 }
