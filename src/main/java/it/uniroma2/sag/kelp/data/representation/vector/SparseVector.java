@@ -102,22 +102,7 @@ public class SparseVector implements Vector {
 			}
 			value = val.floatValue();
 
-			int index = fromWordToInt.get(dimTmp);
-
-			logger.debug(feature);
-			logger.debug(Integer.toString(index));
-
-			if (index == 0) {
-				fromWordToInt.put(dimTmp, wordCounter);
-				fromIntToWord.put(wordCounter, dimTmp);
-				this.vector.put(wordCounter, value);
-				wordCounter++;
-				if (wordCounter == 0) {
-					wordCounter++;
-				}
-			} else {
-				this.vector.put(index, value);
-			}
+			this.setFeatureValue(dimTmp, value);
 		}
 	}
 
@@ -141,7 +126,7 @@ public class SparseVector implements Vector {
 	 *            the index of the feature whose value must be returned
 	 * @return the value of the feature
 	 */
-	public float getFeatureValue(int featureIndex) {
+	private float getFeatureValue(int featureIndex) {
 		return this.vector.get(featureIndex);
 	}
 
@@ -279,25 +264,30 @@ public class SparseVector implements Vector {
 		return res;
 	}
 
+	
+	/**
+	 * Merge this vector with <code>vector</code> (it is like a vector concatenation)
+	 * If V1 is the space where this vector lies and V2 is the space where <code>vector</code> lies, 
+	 * then the resulting vector lies in V1xV2
+	 * 
+	 * <p>
+	 * NOTE: this is not a sum because even if some feature names are shared between the two vectors,
+	 * those will be considered different dimensions (a prefix is added to all feature names of <code>vector</code>)
+	 * 
+	 * @param vector the input vector to be merged with this
+	 * @param coefficient a scaling factor for <code>vector</code> 
+	 * @param newDimensionPrefix the prefix to be added to all the feature names of <code>vector</code>
+	 * during the merging process (<code>vector</code> is not modified)
+	 */
 	public void merge(Vector vector, float coefficient,
 			String newDimensionPrefix) {
 		Map<String, Number> activeFeats = vector.getActiveFeatures();
 		for (Entry<String, Number> entry : activeFeats.entrySet()) {
 			String dimension = newDimensionPrefix + "_" + entry.getKey();
-			int index = fromWordToInt.get(dimension);
+			
 			float value = coefficient * entry.getValue().floatValue();
 
-			if (index == 0) {
-				fromWordToInt.put(dimension, wordCounter);
-				fromIntToWord.put(wordCounter, dimension);
-				this.vector.put(wordCounter, value);
-				wordCounter++;
-				if (wordCounter == 0) {
-					wordCounter++;
-				}
-			} else {
-				this.vector.put(index, value);
-			}
+			this.setFeatureValue(dimension, value);
 		}
 	}
 
@@ -345,5 +335,63 @@ public class SparseVector implements Vector {
 		}
 		
 		return copy;
+	}
+
+	/**
+	 * Sets the value of a feature
+	 * 
+	 * @param featureName the name of the feature
+	 * @param value the value of the feature
+	 */
+	public void setFeatureValue(String featureName, float value){
+		int index = fromWordToInt.get(featureName);
+
+		logger.debug(featureName);
+		logger.debug(Integer.toString(index));
+
+		if (index == 0) {
+			fromWordToInt.put(featureName, wordCounter);
+			fromIntToWord.put(wordCounter, featureName);
+			this.vector.put(wordCounter, value);
+			wordCounter++;
+			if (wordCounter == 0) {
+				wordCounter++;
+			}
+		} else {
+			this.vector.put(index, value);
+		}
+	}
+	
+	/**
+	 * Returns the value associated to a feature
+	 * 
+	 * @param featureName the identifier of the feature
+	 * @return the feature value
+	 */
+	public float getFeatureValue(String featureName){
+		int index = fromWordToInt.get(featureName);
+		return this.getFeatureValue(index);
+	}
+	
+	/**
+	 * Increments the value associated to a feature
+	 * 
+	 * @param featureName the identifier of the feature
+	 * @param valueIncrement the increment
+	 */
+	public void incrementFeature(String featureName, float valueIncrement){
+		int index = fromWordToInt.get(featureName);
+		if(index==0){
+			fromWordToInt.put(featureName, wordCounter);
+			fromIntToWord.put(wordCounter, featureName);
+			this.vector.put(wordCounter, valueIncrement);
+			wordCounter++;
+			if (wordCounter == 0) {
+				wordCounter++;
+			}
+		}else{
+			float newValue = this.getFeatureValue(index) + valueIncrement;
+			this.vector.put(index, newValue);
+		}
 	}
 }

@@ -57,7 +57,7 @@ public class PairSimilarityExtractor implements Manipulator{
 				try{
 					featureVector[i] = similarityMetrics[i].innerProduct(left, right);
 				}catch(IllegalArgumentException e){
-					return;//it can happen if there isa wrong usage of this manipulator (for instance if a DirectKernel has an error in its representationName field)
+					return;//it can happen if there is a wrong usage of this manipulator (for instance if a DirectKernel has an error in its representationName field)
 					//Or it can be due to an ExamplePair whose left and right examples are ExamplePairs to and we are manipulating the wrong level of the example structure
 				}
 				
