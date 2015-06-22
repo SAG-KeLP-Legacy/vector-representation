@@ -199,8 +199,8 @@ public class DenseVector implements Vector {
 	@Override
 	public void normalize() {
 		double norm = NormOps.fastNormP2(this.featuresValues);
-
-		CommonOps.divide(norm, this.featuresValues);
+		if (norm != 0)
+			CommonOps.divide(norm, this.featuresValues);
 	}
 
 	@Override
