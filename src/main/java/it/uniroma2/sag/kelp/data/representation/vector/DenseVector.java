@@ -39,7 +39,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
  */
 
 @JsonTypeName("DV")
-public class DenseVector implements Vector {
+public class DenseVector implements Vector<Integer> {
 	private Logger logger = LoggerFactory.getLogger(DenseVector.class);
 	private static final long serialVersionUID = 1150851329091800382L;
 	private static final String SEPARATOR = " |,";// a space or a comma can
@@ -204,7 +204,7 @@ public class DenseVector implements Vector {
 	}
 
 	@Override
-	public float innerProduct(Vector vector) {
+	public float innerProduct(Vector<?> vector) {
 		if (vector instanceof DenseVector) {
 			DenseVector dense = (DenseVector) vector;
 			if (featuresValues == null)
@@ -218,7 +218,7 @@ public class DenseVector implements Vector {
 	}
 
 	@Override
-	public void pointWiseProduct(Vector vector) {
+	public void pointWiseProduct(Vector<?> vector) {
 		CommonOps.elementMult(this.featuresValues,
 				((DenseVector) vector).featuresValues);
 	}
@@ -230,19 +230,19 @@ public class DenseVector implements Vector {
 	}
 
 	@Override
-	public void add(Vector vector) {
+	public void add(Vector<?> vector) {
 		CommonOps.addEquals(this.featuresValues,
 				((DenseVector) vector).featuresValues);
 
 	}
 	
-	public void diff(Vector vector) {
+	public void diff(DenseVector vector) {
 		CommonOps.subEquals(this.featuresValues,
 				((DenseVector) vector).featuresValues);
 	}
 
 	@Override
-	public void add(float coeff, Vector vector) {
+	public void add(float coeff, Vector<?> vector) {
 
 		CommonOps.addEquals(this.featuresValues, coeff,
 				((DenseVector) vector).featuresValues);
@@ -250,7 +250,7 @@ public class DenseVector implements Vector {
 	}
 
 	@Override
-	public void add(float coeff, float vectorCoeff, Vector vector) {
+	public void add(float coeff, float vectorCoeff, Vector<?> vector) {
 		this.scale(coeff);
 		this.add(vectorCoeff, vector);
 
@@ -258,7 +258,7 @@ public class DenseVector implements Vector {
 
 	@JsonIgnore
 	@Override
-	public Vector getZeroVector() {
+	public DenseVector getZeroVector() {
 		DenseMatrix64F dense = new DenseMatrix64F(this.featuresValues.numRows,
 				this.featuresValues.numCols);
 		DenseVector vector = new DenseVector(dense);
@@ -278,11 +278,11 @@ public class DenseVector implements Vector {
 	}
 
 	@Override
-	public Map<String, Number> getActiveFeatures() {
-		Map<String, Number> activeFeats = new HashMap<String, Number>();
+	public Map<Integer, Number> getActiveFeatures() {
+		Map<Integer, Number> activeFeats = new HashMap<Integer, Number>();
 		for (int i = 0; i < this.getNumberOfFeatures(); i++) {
 			if (featuresValues.get(0, i) != 0) {
-				activeFeats.put(Integer.toString(i),
+				activeFeats.put(i,
 						featuresValues.get(0, i));
 			}
 		}
@@ -290,9 +290,20 @@ public class DenseVector implements Vector {
 	}
 
 	@Override
-	public Vector copyVector() {
+	public DenseVector copyVector() {
 		DenseMatrix64F featureValues = this.getFeatureValues().copy();
 		DenseVector copy = new DenseVector(featureValues);
 		return copy;
+	}
+
+	@Override
+	public void setFeatureValue(Integer featureIdentifier, float value) {
+		this.featuresValues.set(featureIdentifier, value);
+		
+	}
+
+	@Override
+	public float getFeatureValue(Integer featureIdentifier) {
+		return (float) this.getFeatureValue(featureIdentifier.intValue());
 	}
 }

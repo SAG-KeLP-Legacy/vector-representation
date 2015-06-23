@@ -61,6 +61,7 @@ public class Wordspace implements WordspaceI{
 	/**
 	 * The vectors of the Word Space
 	 */
+	@SuppressWarnings("rawtypes")
 	@JsonIgnore
 	private TLongObjectHashMap<Vector> vectors;
 
@@ -73,6 +74,7 @@ public class Wordspace implements WordspaceI{
 	@JsonIgnore
 	private MessageDigest wordEncoder;
 
+	@SuppressWarnings("rawtypes")
 	public Wordspace(){
 		words = new TLongObjectHashMap<char[]>();
 		vectors = new TLongObjectHashMap<Vector>();
@@ -90,7 +92,7 @@ public class Wordspace implements WordspaceI{
 	}
 
 	@Override
-	public void addWordVector(String word, Vector vector) {
+	public void addWordVector(String word, Vector<?> vector) {
 		long l = md5Encode(word);
 
 		if (vectors.containsKey(l)) {
@@ -200,7 +202,7 @@ public class Wordspace implements WordspaceI{
 
 
 	@Override
-	public Vector getVector(String word) {
+	public Vector<?> getVector(String word) {
 		long l = md5Encode(word);
 		if (!vectors.contains(l))
 			return null;
