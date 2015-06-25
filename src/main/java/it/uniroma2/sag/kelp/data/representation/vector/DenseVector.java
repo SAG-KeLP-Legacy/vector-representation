@@ -39,7 +39,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
  */
 
 @JsonTypeName("DV")
-public class DenseVector implements Vector<Integer> {
+public class DenseVector implements Vector {
 	private Logger logger = LoggerFactory.getLogger(DenseVector.class);
 	private static final long serialVersionUID = 1150851329091800382L;
 	private static final String SEPARATOR = " |,";// a space or a comma can
@@ -204,7 +204,7 @@ public class DenseVector implements Vector<Integer> {
 	}
 
 	@Override
-	public float innerProduct(Vector<?> vector) {
+	public float innerProduct(Vector vector) {
 		if (vector instanceof DenseVector) {
 			DenseVector dense = (DenseVector) vector;
 			if (featuresValues == null)
@@ -218,7 +218,7 @@ public class DenseVector implements Vector<Integer> {
 	}
 
 	@Override
-	public void pointWiseProduct(Vector<?> vector) {
+	public void pointWiseProduct(Vector vector) {
 		CommonOps.elementMult(this.featuresValues,
 				((DenseVector) vector).featuresValues);
 	}
@@ -230,7 +230,7 @@ public class DenseVector implements Vector<Integer> {
 	}
 
 	@Override
-	public void add(Vector<?> vector) {
+	public void add(Vector vector) {
 		CommonOps.addEquals(this.featuresValues,
 				((DenseVector) vector).featuresValues);
 
@@ -242,7 +242,7 @@ public class DenseVector implements Vector<Integer> {
 	}
 
 	@Override
-	public void add(float coeff, Vector<?> vector) {
+	public void add(float coeff, Vector vector) {
 
 		CommonOps.addEquals(this.featuresValues, coeff,
 				((DenseVector) vector).featuresValues);
@@ -250,7 +250,7 @@ public class DenseVector implements Vector<Integer> {
 	}
 
 	@Override
-	public void add(float coeff, float vectorCoeff, Vector<?> vector) {
+	public void add(float coeff, float vectorCoeff, Vector vector) {
 		this.scale(coeff);
 		this.add(vectorCoeff, vector);
 
@@ -278,8 +278,8 @@ public class DenseVector implements Vector<Integer> {
 	}
 
 	@Override
-	public Map<Integer, Number> getActiveFeatures() {
-		Map<Integer, Number> activeFeats = new HashMap<Integer, Number>();
+	public Map<Object, Number> getActiveFeatures() {
+		Map<Object, Number> activeFeats = new HashMap<Object, Number>();
 		for (int i = 0; i < this.getNumberOfFeatures(); i++) {
 			if (featuresValues.get(0, i) != 0) {
 				activeFeats.put(i,
@@ -297,13 +297,19 @@ public class DenseVector implements Vector<Integer> {
 	}
 
 	@Override
-	public void setFeatureValue(Integer featureIdentifier, float value) {
-		this.featuresValues.set(featureIdentifier, value);
+	public void setFeatureValue(Object featureIdentifier, float value) {
+		if(!(featureIdentifier instanceof Integer)){
+			throw new IllegalArgumentException("The argument featureIdentifier must be an Integer");
+		}
+		this.featuresValues.set((Integer)featureIdentifier, value);
 		
 	}
 
 	@Override
-	public float getFeatureValue(Integer featureIdentifier) {
-		return (float) this.getFeatureValue(featureIdentifier.intValue());
+	public float getFeatureValue(Object featureIdentifier) {
+		if(!(featureIdentifier instanceof Integer)){
+			throw new IllegalArgumentException("The argument featureIdentifier must be an Integer");
+		}
+		return (float) this.getFeatureValue(((Integer)featureIdentifier).intValue());
 	}
 }

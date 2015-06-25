@@ -42,7 +42,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
  * @author Simone Filice
  */
 @JsonTypeName("V")
-public class SparseVector implements Vector<String> {
+public class SparseVector implements Vector {
 	private Logger logger = LoggerFactory.getLogger(SparseVector.class);
 
 	private static final long serialVersionUID = 1856046477863508095L;
@@ -148,7 +148,7 @@ public class SparseVector implements Vector<String> {
 	}
 
 	@Override
-	public float innerProduct(Vector<?> vector) {
+	public float innerProduct(Vector vector) {
 		if (vector instanceof SparseVector) {
 			float sum = 0;
 			SparseVector sparse = (SparseVector) vector;
@@ -182,7 +182,7 @@ public class SparseVector implements Vector<String> {
 	}
 
 	@Override
-	public void add(Vector<?> vector) {
+	public void add(Vector vector) {
 		if (vector instanceof SparseVector) {
 			SparseVector that = (SparseVector) vector;
 			for (TIntFloatIterator it = that.vector.iterator(); it.hasNext();) {
@@ -198,7 +198,7 @@ public class SparseVector implements Vector<String> {
 	}
 
 	@Override
-	public void add(float coeff, Vector<?> vector) {
+	public void add(float coeff, Vector vector) {
 		if (vector instanceof SparseVector) {
 			SparseVector that = (SparseVector) vector;
 			for (TIntFloatIterator it = that.vector.iterator(); it.hasNext();) {
@@ -213,7 +213,7 @@ public class SparseVector implements Vector<String> {
 	}
 
 	@Override
-	public void add(float coeff, float vectorCoeff, Vector<?> vector) {
+	public void add(float coeff, float vectorCoeff, Vector vector) {
 		this.scale(coeff);
 		this.add(vectorCoeff, vector);
 		// if (vector instanceof SparseVector) {
@@ -253,8 +253,8 @@ public class SparseVector implements Vector<String> {
 	}
 
 	@Override
-	public Map<String, Number> getActiveFeatures() {
-		HashMap<String, Number> res = new HashMap<String, Number>();
+	public Map<Object, Number> getActiveFeatures() {
+		HashMap<Object, Number> res = new HashMap<Object, Number>();
 
 		for (TIntFloatIterator it = this.vector.iterator(); it.hasNext();) {
 			it.advance();
@@ -279,10 +279,10 @@ public class SparseVector implements Vector<String> {
 	 * @param newDimensionPrefix the prefix to be added to all the feature names of <code>vector</code>
 	 * during the merging process (<code>vector</code> is not modified)
 	 */
-	public void merge(Vector<?> vector, float coefficient,
+	public void merge(Vector vector, float coefficient,
 			String newDimensionPrefix) {
-		Map<?, Number> activeFeats = vector.getActiveFeatures();
-		for (Entry<?, Number> entry : activeFeats.entrySet()) {
+		Map<Object, Number> activeFeats = vector.getActiveFeatures();
+		for (Entry<Object, Number> entry : activeFeats.entrySet()) {
 			String dimension = newDimensionPrefix + "_" + entry.getKey().toString();
 			
 			float value = coefficient * entry.getValue().floatValue();
@@ -292,7 +292,7 @@ public class SparseVector implements Vector<String> {
 	}
 
 	@Override
-	public void pointWiseProduct(Vector<?> vector) {
+	public void pointWiseProduct(Vector vector) {
 		if (vector instanceof SparseVector) {
 			SparseVector that = (SparseVector) vector;
 			// A list of integer hash to be removed by the map after the pointwise product operation
@@ -393,5 +393,21 @@ public class SparseVector implements Vector<String> {
 			float newValue = this.getFeatureValue(index) + valueIncrement;
 			this.vector.put(index, newValue);
 		}
+	}
+
+	@Override
+	public void setFeatureValue(Object featureIdentifier, float value) {
+		if(!(featureIdentifier instanceof String)){
+			throw new IllegalArgumentException("The argument featureIdentifier must be a String");
+		}
+		this.setFeatureValue((String)featureIdentifier, value);
+	}
+
+	@Override
+	public float getFeatureValue(Object featureIdentifier) {
+		if(!(featureIdentifier instanceof String)){
+			throw new IllegalArgumentException("The argument featureIdentifier must be a String");
+		}
+		return this.getFeatureValue((String)featureIdentifier);
 	}
 }

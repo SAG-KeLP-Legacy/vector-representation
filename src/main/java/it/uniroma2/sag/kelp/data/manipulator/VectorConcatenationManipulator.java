@@ -65,7 +65,7 @@ public class VectorConcatenationManipulator implements Manipulator{
 		SparseVector vector = new SparseVector();
 		for(int i=0; i<representationsToConcatenated.size(); i++){
 			String representation = representationsToConcatenated.get(i);
-			Vector<?> vectorToBeAdded = (Vector<?>) example.getRepresentation(representation);
+			Vector vectorToBeAdded = (Vector) example.getRepresentation(representation);
 			vector.merge(vectorToBeAdded, weights.get(i), representation);
 		}
 
