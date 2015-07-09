@@ -199,8 +199,8 @@ public class DenseVector implements Vector {
 	@Override
 	public void normalize() {
 		double norm = NormOps.fastNormP2(this.featuresValues);
-
-		CommonOps.divide(norm, this.featuresValues);
+		if (norm != 0)
+			CommonOps.divide(norm, this.featuresValues);
 	}
 
 	@Override
@@ -236,7 +236,7 @@ public class DenseVector implements Vector {
 
 	}
 	
-	public void diff(Vector vector) {
+	public void diff(DenseVector vector) {
 		CommonOps.subEquals(this.featuresValues,
 				((DenseVector) vector).featuresValues);
 	}
@@ -258,7 +258,7 @@ public class DenseVector implements Vector {
 
 	@JsonIgnore
 	@Override
-	public Vector getZeroVector() {
+	public DenseVector getZeroVector() {
 		DenseMatrix64F dense = new DenseMatrix64F(this.featuresValues.numRows,
 				this.featuresValues.numCols);
 		DenseVector vector = new DenseVector(dense);
@@ -278,11 +278,11 @@ public class DenseVector implements Vector {
 	}
 
 	@Override
-	public Map<String, Number> getActiveFeatures() {
-		Map<String, Number> activeFeats = new HashMap<String, Number>();
+	public Map<Object, Number> getActiveFeatures() {
+		Map<Object, Number> activeFeats = new HashMap<Object, Number>();
 		for (int i = 0; i < this.getNumberOfFeatures(); i++) {
 			if (featuresValues.get(0, i) != 0) {
-				activeFeats.put(Integer.toString(i),
+				activeFeats.put(i,
 						featuresValues.get(0, i));
 			}
 		}
@@ -290,9 +290,26 @@ public class DenseVector implements Vector {
 	}
 
 	@Override
-	public Vector copyVector() {
+	public DenseVector copyVector() {
 		DenseMatrix64F featureValues = this.getFeatureValues().copy();
 		DenseVector copy = new DenseVector(featureValues);
 		return copy;
+	}
+
+	@Override
+	public void setFeatureValue(Object featureIdentifier, float value) {
+		if(!(featureIdentifier instanceof Integer)){
+			throw new IllegalArgumentException("The argument featureIdentifier must be an Integer");
+		}
+		this.featuresValues.set((Integer)featureIdentifier, value);
+		
+	}
+
+	@Override
+	public float getFeatureValue(Object featureIdentifier) {
+		if(!(featureIdentifier instanceof Integer)){
+			throw new IllegalArgumentException("The argument featureIdentifier must be an Integer");
+		}
+		return (float) this.getFeatureValue(((Integer)featureIdentifier).intValue());
 	}
 }

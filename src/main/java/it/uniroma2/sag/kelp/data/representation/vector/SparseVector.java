@@ -232,7 +232,7 @@ public class SparseVector implements Vector {
 
 	@JsonIgnore
 	@Override
-	public Vector getZeroVector() {
+	public SparseVector getZeroVector() {
 		return new SparseVector();
 	}
 
@@ -253,8 +253,8 @@ public class SparseVector implements Vector {
 	}
 
 	@Override
-	public Map<String, Number> getActiveFeatures() {
-		HashMap<String, Number> res = new HashMap<String, Number>();
+	public Map<Object, Number> getActiveFeatures() {
+		HashMap<Object, Number> res = new HashMap<Object, Number>();
 
 		for (TIntFloatIterator it = this.vector.iterator(); it.hasNext();) {
 			it.advance();
@@ -281,9 +281,9 @@ public class SparseVector implements Vector {
 	 */
 	public void merge(Vector vector, float coefficient,
 			String newDimensionPrefix) {
-		Map<String, Number> activeFeats = vector.getActiveFeatures();
-		for (Entry<String, Number> entry : activeFeats.entrySet()) {
-			String dimension = newDimensionPrefix + "_" + entry.getKey();
+		Map<Object, Number> activeFeats = vector.getActiveFeatures();
+		for (Entry<Object, Number> entry : activeFeats.entrySet()) {
+			String dimension = newDimensionPrefix + "_" + entry.getKey().toString();
 			
 			float value = coefficient * entry.getValue().floatValue();
 
@@ -324,8 +324,8 @@ public class SparseVector implements Vector {
 	}
 
 	@Override
-	public Vector copyVector() {
-		Vector copy = new SparseVector();
+	public SparseVector copyVector() {
+		SparseVector copy = new SparseVector();
 		
 		try {
 			copy.setDataFromText(this.getTextFromData());
@@ -393,5 +393,21 @@ public class SparseVector implements Vector {
 			float newValue = this.getFeatureValue(index) + valueIncrement;
 			this.vector.put(index, newValue);
 		}
+	}
+
+	@Override
+	public void setFeatureValue(Object featureIdentifier, float value) {
+		if(!(featureIdentifier instanceof String)){
+			throw new IllegalArgumentException("The argument featureIdentifier must be a String");
+		}
+		this.setFeatureValue((String)featureIdentifier, value);
+	}
+
+	@Override
+	public float getFeatureValue(Object featureIdentifier) {
+		if(!(featureIdentifier instanceof String)){
+			throw new IllegalArgumentException("The argument featureIdentifier must be a String");
+		}
+		return this.getFeatureValue((String)featureIdentifier);
 	}
 }

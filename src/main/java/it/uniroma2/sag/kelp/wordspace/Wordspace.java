@@ -61,6 +61,7 @@ public class Wordspace implements WordspaceI{
 	/**
 	 * The vectors of the Word Space
 	 */
+
 	@JsonIgnore
 	private TLongObjectHashMap<Vector> vectors;
 
