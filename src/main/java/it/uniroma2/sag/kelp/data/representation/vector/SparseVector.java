@@ -410,4 +410,12 @@ public class SparseVector implements Vector {
 		}
 		return this.getFeatureValue((String)featureIdentifier);
 	}
+
+	@Override
+	public float euclideanDistance(Vector vector) {
+		float normA = vector.getSquaredNorm();
+		float normB = this.getSquaredNorm();
+
+		return (float) Math.sqrt(normA + normB - 2 * vector.innerProduct(this));
+	}
 }

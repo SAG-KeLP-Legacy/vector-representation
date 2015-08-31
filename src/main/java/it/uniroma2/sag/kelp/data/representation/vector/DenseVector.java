@@ -248,6 +248,20 @@ public class DenseVector implements Vector {
 				((DenseVector) vector).featuresValues);
 
 	}
+	
+	@Override
+	public float euclideanDistance(Vector vector) {
+		double a[] = this.featuresValues.data;
+		double b[] = ((DenseVector) vector).featuresValues.data;
+
+		float res = 0;
+		float tmp;
+		for (int i = 0; i < a.length; i++) {
+			tmp = (float) (a[i] - b[i]);
+			res += tmp * tmp;
+		}
+		return (float) Math.sqrt(res);
+	}
 
 	@Override
 	public void add(float coeff, float vectorCoeff, Vector vector) {
