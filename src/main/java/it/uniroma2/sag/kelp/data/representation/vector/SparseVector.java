@@ -22,6 +22,7 @@ import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TIntFloatHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
+import it.uniroma2.sag.kelp.data.representation.Representation;
 import it.uniroma2.sag.kelp.data.representation.Vector;
 
 import java.io.IOException;
@@ -417,5 +418,14 @@ public class SparseVector implements Vector {
 		float normB = this.getSquaredNorm();
 
 		return (float) Math.sqrt(normA + normB - 2 * vector.innerProduct(this));
+	}
+
+	@Override
+	public boolean isCompatible(Representation rep) {
+		if (!( rep instanceof SparseVector)){
+			logger.error("incompatible representations: " + this.getClass().getSimpleName() + " vs " + rep.getClass().getSimpleName());
+			return false;
+		}
+		return true;
 	}
 }

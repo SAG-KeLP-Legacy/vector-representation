@@ -15,10 +15,11 @@
 
 package it.uniroma2.sag.kelp.data.representation.vector;
 
+import it.uniroma2.sag.kelp.data.representation.Representation;
+import it.uniroma2.sag.kelp.data.representation.Vector;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import it.uniroma2.sag.kelp.data.representation.Vector;
 
 import org.ejml.alg.dense.mult.VectorVectorMult;
 import org.ejml.data.DenseMatrix64F;
@@ -42,7 +43,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 public class DenseVector implements Vector {
 	private Logger logger = LoggerFactory.getLogger(DenseVector.class);
 	private static final long serialVersionUID = 1150851329091800382L;
-	private static final String SEPARATOR = " |,";// a space or a comma can
+	public static final String SEPARATOR = " |,|;";// a space or a comma or a semicolumn can
 													// separate feature values
 
 	@JsonIgnore
@@ -326,4 +327,21 @@ public class DenseVector implements Vector {
 		}
 		return (float) this.getFeatureValue(((Integer)featureIdentifier).intValue());
 	}
+
+	@Override
+	public boolean isCompatible(Representation rep) {
+		if(rep instanceof DenseVector){
+			DenseVector that = (DenseVector) rep;
+			if(this.getNumberOfFeatures()==that.getNumberOfFeatures()){
+				return true;
+			}else{
+				logger.error("inconsistent number of features: " + this.getNumberOfFeatures() + " vs " + that.getNumberOfFeatures());
+				return false;
+			}
+		}
+		logger.error("incompatible representations: " + this.getClass().getSimpleName() + " vs " + rep.getClass().getSimpleName());
+		return false;
+	}
+	
+
 }
